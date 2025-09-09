@@ -1,7 +1,4 @@
-# Roadmap SEO Internacional — Next.js + Tailwind (Vercel export)
-
+# Roadmap SEO Internacional — Next.js + Tailwind (Vercel)
 1) `npm i`
 2) `npm run build` (genera `/out`)
-3) `npm run dev` para local
-
-**Deploy en Vercel:** este proyecto usa `output: 'export'`, por lo que Vercel servirá estático. Si no lo detecta, fija `Output Directory = out` en Settings.
+3) Sube a GitHub y en Vercel configura Output Directory = `out` si no lo detecta.
