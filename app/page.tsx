@@ -1,16 +1,15 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 /* Branding */
 const BRAND = {
   primaryFrom: "#00F5A0",
   primaryTo: "#00D9F5",
-  ink: "#E5F7F2",
-  bg: "#0B1220",
-  panel: "#0F172A",
-  border: "#1E293B",
+  ink: "#1f2937",
+  bg: "#ffffff",
+  panel: "#f8fafc",
+  border: "#e2e8f0",
 };
 
 /* Datasets */
@@ -463,29 +462,34 @@ export default function Page() {
 
   function generatePlanText(){
     const lines: string[] = [];
-    lines.push("# Plan de SEO Internacional — Resumen ejecutable","");
-    lines.push(`Mercados (${countries.length}): ${countries.join(", ")}`);
-    lines.push(`Regiones: ${regions.map(r => REGIONS.find(x=>x.id===r)?.label || r).join(", ")}`);
-    lines.push(`Motores: ${engines.map(e => ENGINES.find(x=>x.id===e)?.label || e).join(", ")}`);
-    lines.push(`Modelo: ${b2b?"B2B":""}${b2b&&b2c?" + ":""}${b2c?"B2C":""}`);
-    lines.push(`Estructura: ${STRUCTURE_INFO[structure].title}`,"","---","");
+    lines.push("PLAN DE SEO INTERNACIONAL");
+    lines.push("=============================\n");
+    lines.push(`📍 MERCADOS OBJETIVO (${countries.length}):`);
+    lines.push(`${countries.join(", ")}\n`);
+    lines.push(`🌍 REGIONES: ${regions.map(r => REGIONS.find(x=>x.id===r)?.label || r).join(", ")}`);
+    lines.push(`🔍 MOTORES: ${engines.map(e => ENGINES.find(x=>x.id===e)?.label || e).join(", ")}`);
+    lines.push(`💼 MODELO: ${b2b?"B2B":""}${b2b&&b2c?" + ":""}${b2c?"B2C":""}`);
+    lines.push(`🏗️ ESTRUCTURA: ${STRUCTURE_INFO[structure].title}\n`);
+    lines.push("─────────────────────────────────────────────────\n");
 
     phasesWithEngines.forEach((phase:any)=>{
-      lines.push(`## ${phase.title}`);
+      lines.push(`${phase.title.toUpperCase()}`);
+      lines.push("─".repeat(phase.title.length));
       phase.tasks.forEach((t:any)=>{
         const key = `${phase.id}__${t.id}`;
-        const mark = checked[key] ? "[x]" : "[ ]";
+        const mark = checked[key] ? "✅" : "⬜";
         const def = getDefaults(key);
-        lines.push(`- ${mark} ${t.label} (${t.tag}) — peso:${def.weight} · horas:${def.hours}`);
+        lines.push(`${mark} ${t.label} [${t.tag}] (Peso: ${def.weight}, Horas: ${def.hours})`);
       });
       lines.push("");
     });
 
-    lines.push("## Legal por país");
+    lines.push("CUMPLIMIENTO LEGAL POR PAÍS");
+    lines.push("─────────────────────────────");
     legalTasks.forEach((lt:any,i:number)=>{
       const key = `legal__${i}`;
-      const mark = checked[key] ? "[x]" : "[ ]";
-      lines.push(`- ${mark} ${lt.label}`);
+      const mark = checked[key] ? "✅" : "⬜";
+      lines.push(`${mark} ${lt.label}`);
     });
 
     setPlanText(lines.join("\n"));
@@ -493,27 +497,20 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: BRAND.bg, color: BRAND.ink }}>
+    <div className="min-h-screen pb-20" style={{ background: BRAND.bg, color: BRAND.ink }}>
       {/* Header */}
       <header className="sticky top-0 z-30 backdrop-blur border-b" style={{ borderColor: BRAND.border }}>
         <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <Image src="/logo.png" width={180} height={64} alt="Jorge J. Rolo logo" className="h-10 w-auto object-contain" />
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-[-0.02em]">Roadmap SEO Internacional</h1>
-              <p className="text-slate-300 text-sm md:text-base">Branding Jorge · presets · checklist por mercado · evidencias · timeline · export.</p>
-            </div>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-[-0.02em]">Roadmap SEO Internacional</h1>
+            <p className="text-slate-600 text-sm md:text-base">Herramienta completa para planificar y ejecutar estrategias de SEO internacional</p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <select onChange={e=> applyPreset((e.target as HTMLSelectElement).value)} defaultValue="" className="px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-sm">
-              <option value="" disabled>Presets</option>
+          <div className="flex items-center gap-3">
+            <button className="px-3 py-2 text-sm text-slate-600 hover:text-slate-900 underline" onClick={() => document.getElementById('help-section')?.scrollIntoView({ behavior: 'smooth' })}>❓ Cómo usar</button>
+            <select onChange={e=> applyPreset((e.target as HTMLSelectElement).value)} defaultValue="" className="px-3 py-2 rounded-lg bg-white border border-slate-300 text-sm hover:border-slate-400">
+              <option value="" disabled>🚀 Presets rápidos</option>
               {PRESETS.map(p => (<option key={p.id} value={p.id}>{p.label}</option>))}
             </select>
-            <button onClick={resetAll} className="px-3 py-2 rounded-lg text-sm" style={{ background:"#0f172a", border:`1px solid ${BRAND.border}`}}>Reiniciar</button>
-            <button onClick={exportJSON} className="px-3 py-2 rounded-lg text-sm font-semibold" style={{ background: BRAND.primaryFrom, color: "#0b1220"}}>Export JSON</button>
-            <button onClick={exportCSVTasks} className="px-3 py-2 rounded-lg text-sm font-semibold" style={{ background: BRAND.primaryTo, color: "#0b1220"}}>CSV (Notion)</button>
-            <button onClick={exportTimelineCSV} className="px-3 py-2 rounded-lg text-sm font-semibold" style={{ background: BRAND.primaryTo, color: "#0b1220"}}>CSV Timeline</button>
-            <button onClick={generatePlanText} className="px-3 py-2 rounded-lg text-slate-900 text-sm font-semibold" style={{ background: BRAND.primaryFrom }}>Generar Plan</button>
           </div>
         </div>
       </header>
@@ -522,12 +519,12 @@ export default function Page() {
       <section className="max-w-7xl mx-auto px-4 pt-6 pb-2">
         <div className="grid md:grid-cols-12 gap-4">
           {/* Regiones */}
-          <div className="md:col-span-3" style={{ background:"rgba(15,23,42,0.7)", border:`1px solid ${BRAND.border}`}}>
+          <div className="md:col-span-3" style={{ background: BRAND.panel, border:`1px solid ${BRAND.border}`}}>
             <div className="p-4 rounded-2xl">
               <h3 className="font-semibold mb-2">Regiones</h3>
               <div className="flex flex-wrap gap-2">
                 {REGIONS.map((r:any) => (
-                  <button key={r.id} onClick={() => setRegions(prev => prev.includes(r.id) ? prev.filter(x=>x!==r.id) : [...prev, r.id])} className={`px-3 py-1.5 rounded-full text-sm border ${regions.includes(r.id) ? "bg-slate-100 text-slate-900 border-slate-100" : "bg-slate-800 border-slate-700"}`}>
+                  <button key={r.id} onClick={() => setRegions(prev => prev.includes(r.id) ? prev.filter(x=>x!==r.id) : [...prev, r.id])} className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${regions.includes(r.id) ? "bg-blue-500 text-white border-blue-500" : "bg-white border-slate-300 hover:bg-slate-50"}`}>
                     {r.label}
                   </button>
                 ))}
@@ -536,7 +533,7 @@ export default function Page() {
           </div>
 
           {/* Países */}
-          <div className="md:col-span-5" style={{ background:"rgba(15,23,42,0.7)", border:`1px solid ${BRAND.border}`}}>
+          <div className="md:col-span-5" style={{ background: BRAND.panel, border:`1px solid ${BRAND.border}`}}>
             <div className="p-4 rounded-2xl">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold">Países ({countries.length})</h3>
@@ -548,7 +545,7 @@ export default function Page() {
                     <summary className="cursor-pointer text-sm font-medium">{REGIONS.find(x=>x.id===r)?.label}</summary>
                     <div className="mt-2 flex flex-wrap gap-2">
                       {(COUNTRIES_BY_REGION[r]||[]).map((c:string) => (
-                        <button key={c} onClick={() => setCountries(prev => prev.includes(c) ? prev.filter(x=>x!==c) : [...prev, c])} className={`px-3 py-1.5 rounded-full text-sm border ${countries.includes(c) ? "bg-emerald-400 text-slate-950 border-emerald-400" : "bg-slate-700 border-slate-600"}`}>
+                        <button key={c} onClick={() => setCountries(prev => prev.includes(c) ? prev.filter(x=>x!==c) : [...prev, c])} className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${countries.includes(c) ? "bg-green-500 text-white border-green-500" : "bg-white border-slate-300 hover:bg-slate-50"}`}>
                           {c}
                         </button>
                       ))}
@@ -568,12 +565,12 @@ export default function Page() {
           </div>
 
           {/* Motores + Modelo + Estructura */}
-          <div className="md:col-span-4" style={{ background:"rgba(15,23,42,0.7)", border:`1px solid ${BRAND.border}`}}>
+          <div className="md:col-span-4" style={{ background: BRAND.panel, border:`1px solid ${BRAND.border}`}}>
             <div className="p-4 rounded-2xl">
               <h3 className="font-semibold mb-2">Buscadores</h3>
               <div className="flex flex-wrap gap-2">
                 {ENGINES.map((e:any) => (
-                  <button key={e.id} onClick={() => setEngines(prev => prev.includes(e.id) ? prev.filter(x=>x!==e.id) : [...prev, e.id])} className={`px-3 py-1.5 rounded-full text-sm border ${engines.includes(e.id) ? "bg-sky-500 text-slate-950 border-sky-500" : "bg-slate-800 border-slate-700"}`}>
+                  <button key={e.id} onClick={() => setEngines(prev => prev.includes(e.id) ? prev.filter(x=>x!==e.id) : [...prev, e.id])} className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${engines.includes(e.id) ? "bg-purple-500 text-white border-purple-500" : "bg-white border-slate-300 hover:bg-slate-50"}`}>
                     {e.label}
                   </button>
                 ))}
@@ -599,18 +596,46 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Help Section */}
+      <section id="help-section" className="max-w-7xl mx-auto px-4 pb-6">
+        <div className="rounded-2xl p-6 border" style={{ background: BRAND.panel, borderColor: BRAND.border }}>
+          <div className="flex items-start gap-4">
+            <div className="text-3xl">📚</div>
+            <div className="flex-1">
+              <h2 className="text-xl font-bold mb-4">Cómo usar esta herramienta</h2>
+              <div className="grid md:grid-cols-2 gap-6 text-sm leading-relaxed">
+                <div>
+                  <h3 className="font-semibold mb-2 text-blue-600">🌍 1. Configura tus mercados</h3>
+                  <p className="text-slate-600 mb-3">Selecciona las regiones y países donde quieres implementar SEO internacional. Puedes usar los presets rápidos o personalizarlo.</p>
+                  
+                  <h3 className="font-semibold mb-2 text-green-600">🔍 2. Elige buscadores</h3>
+                  <p className="text-slate-600 mb-3">Selecciona los motores de búsqueda relevantes para tus mercados (Google, Bing, Baidu para China, Yandex para Rusia, etc.).</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2 text-purple-600">✓ 3. Trabaja con el checklist</h3>
+                  <p className="text-slate-600 mb-3">Usa el <strong>Checklist global</strong> para una vista general o <strong>Checklist por mercado</strong> para detalles específicos, evidencias y estimaciones.</p>
+                  
+                  <h3 className="font-semibold mb-2 text-orange-600">📤 4. Exporta y planifica</h3>
+                  <p className="text-slate-600">Genera el plan de texto, exporta a CSV para Notion, o descarga todo en JSON. Configura el timeline por fases.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Tabs */}
       <section className="max-w-7xl mx-auto px-4 pb-4">
         <div className="flex items-center gap-2">
-          <button onClick={()=>setView("global")} className={`px-4 py-2 rounded-xl border ${view==='global'?"bg-slate-100 text-slate-900 border-slate-100":"bg-slate-900 text-slate-100 border-slate-700"}`}>Checklist global</button>
-          <button onClick={()=>setView("market")} className={`px-4 py-2 rounded-xl border ${view==='market'?"bg-slate-100 text-slate-900 border-slate-100":"bg-slate-900 text-slate-100 border-slate-700"}`}>Checklist por mercado</button>
+          <button onClick={()=>setView("global")} className={`px-4 py-2 rounded-xl border transition-colors ${view==='global'?"bg-blue-500 text-white border-blue-500":"bg-white text-slate-700 border-slate-300 hover:bg-slate-50"}`}>📋 Checklist global</button>
+          <button onClick={()=>setView("market")} className={`px-4 py-2 rounded-xl border transition-colors ${view==='market'?"bg-blue-500 text-white border-blue-500":"bg-white text-slate-700 border-slate-300 hover:bg-slate-50"}`}>🌍 Checklist por mercado</button>
         </div>
       </section>
 
       {/* Global progress */}
       {view === 'global' && (
         <section className="max-w-7xl mx-auto px-4 pb-4">
-          <div className="p-4 rounded-2xl" style={{ background:"rgba(15,23,42,0.7)", border:`1px solid ${BRAND.border}`}}>
+          <div className="p-4 rounded-2xl" style={{ background: BRAND.panel, border:`1px solid ${BRAND.border}`}}>
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm">Progreso global: <span className="font-semibold">{globalCompleted}</span> / {visibleTaskKeys.length}</p>
               <p className="text-sm">{globalProgress}%</p>
@@ -714,15 +739,17 @@ export default function Page() {
           </div>
 
           {/* Plan preview */}
-          <section id="plan-output" className="mt-8 rounded-2xl p-4" style={{ background:"rgba(15,23,42,0.7)", border:`1px solid ${BRAND.border}`}}>
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold">Plan en texto (Markdown)</h3>
+          <section id="plan-output" className="mt-8 rounded-2xl p-4" style={{ background: BRAND.panel, border:`1px solid ${BRAND.border}`}}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-lg">📋 Plan de Ejecución</h3>
               <div className="flex gap-2">
-                <button onClick={() => navigator.clipboard.writeText(planText)} className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm">Copiar</button>
-                <button onClick={() => window.print()} className="px-3 py-1.5 rounded-lg text-slate-900 text-sm" style={{ background: BRAND.primaryFrom }}>Imprimir / PDF</button>
+                <button onClick={() => navigator.clipboard.writeText(planText)} className="px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-50 text-sm">📋 Copiar</button>
+                <button onClick={() => window.print()} className="px-3 py-1.5 rounded-lg text-white text-sm font-medium" style={{ background: `linear-gradient(90deg, ${BRAND.primaryFrom}, ${BRAND.primaryTo})` }}>🖨️ Imprimir</button>
               </div>
             </div>
-            <textarea value={planText} onChange={(e)=>setPlanText((e.target as HTMLTextAreaElement).value)} rows={10} className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm font-mono" placeholder="Pulsa ‘Generar Plan’ para crear el resumen ejecutable…" />
+            <div className="bg-white border border-slate-200 rounded-xl p-4 font-mono text-sm leading-relaxed whitespace-pre-line" style={{ minHeight: '300px' }}>
+              {planText || "Pulsa '✨ Generar Plan' en la barra inferior para crear tu resumen ejecutable..."}
+            </div>
           </section>
         </main>
       )}
@@ -877,6 +904,24 @@ export default function Page() {
 
       {/* Footer */}
       <footer className="py-10 text-center text-slate-500 text-xs">© {new Date().getFullYear()} International SEO Roadmap — Branded for Jorge J. Rolo</footer>
+      
+      {/* Sticky CTA Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg z-50">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-slate-600">Acciones:</span>
+              <button onClick={resetAll} className="px-3 py-1.5 rounded-lg text-sm border border-slate-300 hover:bg-slate-50">🔄 Reiniciar</button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={exportJSON} className="px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-100 hover:bg-slate-200 border border-slate-300">📄 JSON</button>
+              <button onClick={exportCSVTasks} className="px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-100 hover:bg-slate-200 border border-slate-300">📊 CSV Tasks</button>
+              <button onClick={exportTimelineCSV} className="px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-100 hover:bg-slate-200 border border-slate-300">📅 Timeline</button>
+              <button onClick={generatePlanText} className="px-4 py-1.5 rounded-lg text-sm font-semibold text-white" style={{ background: `linear-gradient(90deg, ${BRAND.primaryFrom}, ${BRAND.primaryTo})` }}>✨ Generar Plan</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
