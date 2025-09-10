@@ -853,11 +853,11 @@ export default function Page() {
                   <div className="grid grid-cols-3 gap-2 items-center">
                     <div>
                       <div className="text-xs text-slate-400 mb-1">Inicio</div>
-                      <input type="date" value={start} onChange={(e)=> setPhaseSchedule(prev => ({...prev, [p.id]: { ...(prev[p.id]||{}), start:(e.target as HTMLInputElement).value }}))} className="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700" />
+                      <input type="date" value={start} onChange={(e)=> setPhaseSchedule(prev => ({...prev, [p.id]: { ...(prev[p.id]||{start:'', days:0}), start:(e.target as HTMLInputElement).value }}))} className="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700" />
                     </div>
                     <div>
                       <div className="text-xs text-slate-400 mb-1">Días</div>
-                      <input type="number" min={0} value={days} onChange={(e)=> setPhaseSchedule(prev => ({...prev, [p.id]: { ...(prev[p.id]||{}), days:Number((e.target as HTMLInputElement).value) }}))} className="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700" />
+                      <input type="number" min={0} value={days} onChange={(e)=> setPhaseSchedule(prev => ({...prev, [p.id]: { ...(prev[p.id]||{start:'', days:0}), days:Number((e.target as HTMLInputElement).value) }}))} className="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700" />
                     </div>
                     <div>
                       <div className="text-xs text-slate-400 mb-1">Fin</div>
